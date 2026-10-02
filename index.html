@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PUBG UC Rewards</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#080b12;
+  color:white;
+  text-align:center;
+}
+.container{max-width:430px;margin:auto;padding:20px}
+h1{color:#ffd21c;margin:10px 0}
+.card{
+  background:#111722;
+  border:1px solid #293244;
+  border-radius:18px;
+  padding:20px;
+  margin:15px 0;
+  box-shadow:0 0 20px #0008;
+}
+.balance{
+  font-size:34px;
+  font-weight:bold;
+  color:#ffd21c;
+}
+button{
+  width:100%;
+  padding:15px;
+  margin:8px 0;
+  border:0;
+  border-radius:12px;
+  background:#ffd21c;
+  color:#111;
+  font-size:17px;
+  font-weight:bold;
+}
+button:active{transform:scale(.97)}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #39445a;
+  background:#080b12;
+  color:white;
+  margin:8px 0;
+}
+.small{color:#9ca6b8;font-size:14px}
+.uc{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1a2130;
+  padding:14px;
+  border-radius:12px;
+  margin:8px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎮 PUBG UC REWARDS</h1>
+<p class="small">Earn points • Complete rewards • Redeem</p>
+
+<div class="card">
+  <div class="small">YOUR POINTS</div>
+  <div class="balance" id="points">0</div>
+  <button onclick="tapEarn()">⚡ EARN POINTS</button>
+</div>
+
+<div class="card">
+  <h2>🎁 Daily Reward</h2>
+  <button onclick="dailyReward()">CLAIM +500</button>
+  <p id="dailyMsg" class="small"></p>
+</div>
+
+<div class="card">
+  <h2>👥 Referral</h2>
+  <input id="ref" placeholder="Referral code">
+  <button onclick="referral()">ACTIVATE REFERRAL</button>
+  <p class="small">Referral reward: +1000 points</p>
+</div>
+
+<div class="card">
+  <h2>🎯 UC Redeem</h2>
+
+  <input id="playerId" placeholder="Enter PUBG Player ID">
+
+  <div class="uc">
+    <span>10 UC</span>
+    <b>1,000 pts</b>
+  </div>
+  <button onclick="redeem(10,1000)">REDEEM 10 UC</button>
+
+  <div class="uc">
+    <span>60 UC</span>
+    <b>6,000 pts</b>
+  </div>
+  <button onclick="redeem(60,6000)">REDEEM 60 UC</button>
+
+  <div class="uc">
+    <span>325 UC</span>
+    <b>32,500 pts</b>
+  </div>
+  <button onclick="redeem(325,32500)">REDEEM 325 UC</button>
+
+  <p id="msg" class="small"></p>
+</div>
+
+</div>
+
+<script>
+let points = Number(localStorage.getItem("points")) || 0;
+
+function update(){
+  document.getElementById("points").textContent =
+    points.toLocaleString();
+
+  localStorage.setItem("points", points);
+}
+
+function tapEarn(){
+  points += 10;
+  update();
+}
+
+function dailyReward(){
+  let today = new Date().toDateString();
+  let last = localStorage.getItem("daily");
+
+  if(last === today){
+    document.getElementById("dailyMsg").textContent =
+      "❌ You already claimed today's reward.";
+    return;
+  }
+
+  points += 500;
+  localStorage.setItem("daily", today);
+  update();
+
+  document.getElementById("dailyMsg").textContent =
+    "✅ +500 points added!";
+}
+
+function referral(){
+  let code = document.getElementById("ref").value.trim();
+
+  if(!code){
+    alert("Enter referral code");
+    return;
+  }
+
+  if(localStorage.getItem("refUsed")){
+    alert("Referral already used.");
+    return;
+  }
+
+  points += 1000;
+  localStorage.setItem("refUsed","yes");
+  update();
+
+  alert("🎉 +1000 referral points!");
+}
+
+function redeem(uc,cost){
+  let player = document.getElementById("playerId").value.trim();
+  let msg = document.getElementById("msg");
+
+  if(!player){
+    msg.textContent = "❌ Enter your PUBG Player ID.";
+    return;
+  }
+
+  if(points < cost){
+    msg.textContent =
+      "❌ Not enough points. You need " +
+      cost.toLocaleString() + " points.";
+    return;
+  }
+
+  points -= cost;
+  update();
+
+  msg.textContent =
+    "✅ Redeem request created: " +
+    uc + " UC for Player ID " + player +
+    ". Waiting for admin approval.";
+}
+
+update();
+</script>
+
+</body>
+</html>
